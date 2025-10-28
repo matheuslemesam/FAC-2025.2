@@ -1,0 +1,71 @@
+.data
+str_paridade: .string "bit-paridade: "
+str_saida:    .string "saida: "
+str_erro:     .string "entrada incorreta"
+novalinha:    .string "\n"
+
+.text
+main:
+    li a7, 5
+    ecall
+    
+    mv s0, a0
+    
+    li t3, 128
+    bge s0, t3, print_erro 
+    
+    mv t0, s0
+    li t1, 0
+    
+loop_start:
+    beqz t0, fim_loop
+    xori t1, t1, 1
+    addi t2, t0, -1
+    and t0, t0, t2
+    j loop_start
+
+fim_loop:
+    la a0, str_paridade
+    li a7, 4
+    ecall
+    
+    mv a0, t1
+    li a7, 1
+    ecall
+    
+    la a0, novalinha
+    li a7, 4
+    ecall
+    
+    beqz t1, pular_modificacao
+    
+    li t2, 128
+    or s0, s0, t2
+    
+pular_modificacao:
+    la a0, str_saida
+    li a7, 4
+    ecall
+    
+    mv a0, s0
+    li a7, 1
+    ecall
+    
+    la a0, novalinha
+    li a7, 4
+    ecall
+    
+    j exit
+
+print_erro:
+    la a0, str_erro
+    li a7, 4
+    ecall
+    
+    la a0, novalinha
+    li a7, 4
+    ecall
+
+exit:
+    li a7, 10
+    ecall
